@@ -1,0 +1,67 @@
+
+Sayısal Veri Tipleri
+
+smallint (int2)	-> 2 byte ->	small-range integer ->	-32768 ile +32767 aralığındaki tam sayılar
+integer (int4)	-> 4 byte -> typical choice for integer	-> -2147483648 ile +2147483647 aralığındaki tam sayılar
+bigint (int8)	-> 8 byte ->	large-range integer	 -> -9223372036854775808 ile +9223372036854775807 aralığındaki tam sayılar
+
+PostgreSQL’de rasyonel sayıları da saklamak için birkaç veri tipi vardır. 
+ 
+ Decimal ve Numeric tamamen birbirinin aynı özelliklere sahip veri tipleri olup SQL standartlarını sağlayabilmek için ayrı ayrı tanımlanmışlardır. Decimal ve numeric veri tiplerinde saklanacak toplam hane sayısına karar veririz. Bunun için veri tipini tanımlarken precision ve scale tanımlamalarını kullanırız.
+        decimal	-> değişken	-> Kullanıcı tanımlı hassasiyet, mutlak	-> Ondalık ayracı öncesinde 131072 haneye kadar sonrasında 16383 haneye kadar
+        numeric	-> değişken	-> Kullanıcı tanımlı hassasiyet, mutlak	-> Ondalık ayracı öncesinde 131072 haneye kadar sonrasında 16383 haneye kadar
+
+    Real ve double veri tipleri, tanımı gereği rasyonel olarak tam olarak ifade edilemeyen bunun yerine değerine en yakınsanmış değer olarak kaydedilebilen sayılar için kullanılır. Bu sebeple kesin hesap gerektiren veri tiplerinde bunlar yerine numeric veri tipinin kullanılması tavsiye edilir. 
+        real -> 4 byte ->	değişken ondalık hassasiyeti, mutlak değil  ->	6 ondalık hane
+        double  precision -> 4 byte->	değişken ondalık hassasiyeti, mutlak değil ->	15 ondalık hane
+
+Metinsel Veri Tipleri
+    character varying(n), varchar(n) -> değişken uzunluklu sabit boyutlu
+    character(n), char(n)  ->	sabit uzunluklu, boş alanlar boşlukla doldurulur
+    text -> değişken sınırsız uzunluklu
+        char(n) ve varchar(n) arasında ciddi bir performans farkında ziyade diskte kaplanan alanda farklılık vardır. Bununla birlikte char(n) üç metin tipi içinde en maliyetli olan olarak varsayılabilir.
+
+Binary Veri Tipi
+    Binary tipindeki verileri saklamak için PostgreSQL bytea veri tipini kullanır. Bytea veri tipi input ve output için iki formatı destekler: hex ve escape. Her iki format da daima input olarak kabul edilirken output için varsayılan format hex’tir.
+    0 ile 8000 arası tanımladığı kadar byte
+    SQL standardı BLOB veya BINARY LARGE OBJECT olarak adlandırılmış farklı bir binary veri formatını tanımlamaktadır. Input formatı bytea’den farklıdır fakat sunulan fonksiyon ve operatörler çoğunlukla aynıdır.
+
+Parasal Veri Tipleri
+    Parasal bilgileri saklamak için PostgreSQL’de MONEY veri tipi kullanılabilir. Bu veri tipinde geçerli olan para tipi bilgisi ve saklanacak verinin ondalık hassasiyeti veritabanının lc_monetary ayarında belirlenir. Kuruş hassasiyeti de diyebileceğimiz bu değer varsayılan olarak virgül sonrası 2 hanedir.
+    Bu veri tipini kullanırken dikkatli olunması gereken durumlar, özellikle farklı para birimindeki değerlerin aynı tabloya girilmesi halinde ortaya çıkar. Farklı para birimindeki bir tablo yedeği farklı yerel para birimi ayarına sahip bir veritabanına atılırken ya da veritabanında ayarlanandan farklı para biriminde bir nesneyi çalışılan tabloya yazarken dikkat edilmelidir.
+    Money türünde kaydedilen veriler farklı veri tiplerine dönüştürülebilir. Bununla birlikte içinde parasal varlıkları kaydettiğimiz başka veri kolonlarının money tipine dönüşümlerinde dikkat edilmelidir.
+    Son olarak money tipinde bir parasal varlıkla yapılan çarpma / bölme işlemleridir. Money tipindeki veriler integer tipinde bir veriye bölündüğünde ondalık kısımdaki veri kaybedilir ve tam sayı sonuç elde edilir.
+
+Tarih / Zaman Veri Tipleri
+    PostgreSQL çok geniş bir tarih - zaman veri tipi kütüphanesi sunmaktadır. Bu sayede tarih ve zaman fonksiyonları çok etkin bir şekilde kullanılabilmekte ve birbirine dönüştürülerek çok etkin hesaplamalar yapılabilmektedir.
+    timestamp [ (p) ] [ without time zone ]	-> 8 byte	-> Tarih ve saat (zaman dilimi bilgisi hariç)	-> 4713 MÖ	-> 294276 MS	-> 1 mikrosaniye / 14 hane
+    timestamp [ (p) ] with time zone -> 8 byte -> 	Tarih ve saat (zaman dilimi bilgisi dahil) -> 	4713 MÖ	-> 294276 MS	-> 1 mikrosaniye / 14 hane
+    date	-> 4 byte	-> Tarih	-> 4713 MÖ	-> 5874897 MS	-> 1 gün
+    time [ (p) ] [ without time zone ]	-> 8 byte	-> Saat (zaman dilimi bilgisi hariç)	-> 00:00:00	24:00:00	-> 1 mikrosaniye / 14 hane
+    time [ (p) ] with time zone	-> 12 byte  -> 	Saat (zaman dilimi bilgisi dahil)	-> 00:00:00 +1459	24:00:00-1459	-> 1 mikrosaniye / 14 hane
+    interval [ fields ] [ (p) ] -> 	16 byte	-> Zaman araligi	-178000000 yıl	178000000 yıl -> 	1 mikrosaniye / 14 hane
+
+Boolean Veri Tipleri
+    PostgreSQL’de sunulan BOOLEAN veri tipi TRUE, FALSE ve bilinmeyen durumlarda kullanılmak üzere de NULL değerlerini alabilir. Bu veri tipinde true yerine yes, on, t ya da 1 kabul edilebilirken false yerine de no, off, f ve 0 kabul edilmektedir. 
+
+ENUMERATED Veri Tipleri
+    Sıralı tipler, statik, dizilmiş değerler kümesi olarak ifade edilebilen veri türleridir. Haftanın günleri, yılın ayları ya da kullanıcının tanımlayacağı herhangi bir değerler dizisi tek bir enum veri girdisi olabilir. Bu tür verilerin kullanılabilmesi için kullanıcının ENUM türünde bir veri tanımlaması gerekmektedir. 
+
+Network Adres Tipleri
+    PostgreSQL farklı tipte network adreslerinin (IPv4, IPv6, MAC) saklanabilmesini sağlayan veri tiplerinin oluşturulmasına da izin vermektedir.
+        cidr -> 7 - 19 byte -> IPv4 ve IPv6 ağlar
+        inet -> 7 - 19 byte	-> IPv4 ve IPv6 ağlar / sunucular
+        macaddr	 -> 6 byte	-> MAC adresleri
+        macaddr8 -> 8 byte	-> MAC adresleri (EUI-64 formatı)
+
+RANGE Tipi Veriler
+    Range tipindeki veriler adından anlaşılabileceği üzere tek değeri değil, bir değer aralığını tutarlar
+        int4range:   Integer range
+        int8range:   Bigint range
+        numrange:    Numeric range
+        tsrange:     Timestamp without time zone range
+        tstzrange:   Timestamp with time zone range
+        daterange:   Date range
+
+BIT String Tipi Veriler
+    Bunlar 0 ve 1’lerden oluşan veri dizileridir. PostgreSQL’de bu tip verileri saklamak için bit(n) ve bit varying (n) kullanılabilir. Burada n değeri pozitif tam sayı olup metinsel verilerdeki gibi veri kolonuna girilebilecek azami dizi uzunluğunu ifade eder.
