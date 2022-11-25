@@ -15,7 +15,7 @@ SELECT KOMUTU
     
     #! sorgusu Otomobiller tablosu içindeki 2021 yılına ait model ve markaları gösterecektir.
 örneğin:
-    Öğrenci tablosundaki tüm kayıtları listelemek istersek.
+    Öğrenci tablosundaki tüm kayıtları listelemek istersek
        SELECT * FROM ogrenci
        
        komutunu kullanmalıyız.
