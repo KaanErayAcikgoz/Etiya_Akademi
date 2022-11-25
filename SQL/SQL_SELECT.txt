@@ -1,0 +1,22 @@
+SELECT KOMUTU
+    SELECT deyimi, bir veritabanından veri seçmek için kullanılır. Bu işleme sorgulama denir.Sorgu sonucunda görüntülenmesini istediğimiz sütunları ve isteğe bağlı olarak, sonuç tablosunun üzerinde görmek istediğimiz sütun başlıklarını belirleriz.
+        Kullanımı:
+        SELECT kolon1, kolon2, ...
+        FROM tablo_adı
+        WHERE <ŞARTLAR>
+    
+     Elimizdeki tabloda bulunan tüm alanları seçmek istiyorsak
+      SELECT * FROM tablo_adı
+örneğin:
+    SELECT model markalar
+    
+    FROM otomobiller 
+    WHERE modelyılı = ‘2021’ 
+    
+    #! sorgusu Otomobiller tablosu içindeki 2021 yılına ait model ve markaları gösterecektir.
+örneğin:
+    Öğrenci tablosundaki tüm kayıtları listelemek istersek.
+       SELECT * FROM ogrenci
+       
+       komutunu kullanmalıyız.
+
